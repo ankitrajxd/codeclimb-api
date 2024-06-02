@@ -2,6 +2,9 @@ import express from "express";
 import { configDotenv } from "dotenv";
 import mongoose from "mongoose";
 import { router as challenges } from "./routes/challenges.js";
+import { router as users } from "./routes/users.js";
+import { router as auth } from "./routes/auth.js";
+import cookieParser from "cookie-parser";
 
 configDotenv();
 
@@ -15,7 +18,10 @@ const app = express();
 
 // middlewares
 app.use(express.json());
+app.use(cookieParser());
 app.use("/api/challenges", challenges);
+app.use("/api/users", users);
+app.use("/api/auth", auth);
 
 app.get("/", (req, res) => {
   res.send("Hello world");

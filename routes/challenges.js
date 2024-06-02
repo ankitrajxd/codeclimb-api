@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { Challenge, validateChallenge } from "../models/challenge.js";
 import Joi from "joi";
+import { admin } from "../middleware/auth.js";
 
 const router = Router();
 
@@ -18,7 +19,7 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-router.post("/", async (req, res) => {
+router.post("/", admin, async (req, res) => {
   const { error } = validateChallenge(req.body);
 
   if (error) return res.status(400).send(error.message);
@@ -37,7 +38,7 @@ router.post("/", async (req, res) => {
   res.send(challenge);
 });
 
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", admin, async (req, res) => {
   try {
     await Challenge.findByIdAndDelete(req.params.id);
   } catch (error) {
@@ -46,7 +47,7 @@ router.delete("/:id", async (req, res) => {
   res.send("Deleted Successfully.");
 });
 
-router.put("/:id", async (req, res) => {
+router.put("/:id", admin, async (req, res) => {
   const { error } = validateEditChallenge();
 
   if (error) return res.status(400).send(error.message);
@@ -57,12 +58,13 @@ router.put("/:id", async (req, res) => {
       req.body,
       { new: true }
     );
-
     return res.send(updatedChallenge);
   } catch (error) {
     return res.status(400).send("Invalid Id");
   }
 });
+
+
 
 function validateEditChallenge(challenge) {
   const Schema = Joi.object({
