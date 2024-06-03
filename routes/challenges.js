@@ -6,9 +6,45 @@ import { admin } from "../middleware/auth.js";
 const router = Router();
 
 router.get("/", async (req, res) => {
-  const challenges = await Challenge.find();
-  res.send(challenges);
+  try {
+    let query = {};
+
+    // Check if 'difficulty' query parameter exists
+    if (req.query.difficulty) {
+      // Convert user-provided difficulty to lowercase
+      const difficulty = req.query.difficulty.toLowerCase();
+      
+      // Add case-insensitive filter for difficulty
+      query.difficulty = { $regex: new RegExp('^' + difficulty, 'i') };
+    }
+
+    // Fetch challenges based on the query
+    const challenges = await Challenge.find(query);
+    res.send(challenges);
+  } catch (error) {
+    res.status(500).json({ error: "An error occurred while fetching challenges" });
+  }
 });
+
+//-----------------------------------------------
+// Ensure the text index is created
+Challenge.createIndexes();
+
+// Search endpoint
+router.get("/search", async (req, res) => {
+  const query = req.query.q;
+  if (!query) {
+    return res.status(400).json({ error: 'Query parameter "q" is required' });
+  }
+  try {
+    // Use MongoDB's text search
+    const results = await Challenge.find({ $text: { $search: query } });
+    res.json(results);
+  } catch (err) {
+    res.status(500).json({ error: "An error occurred while searching" });
+  }
+});
+//-----------------------------------------------------
 
 router.get("/:id", async (req, res) => {
   try {
@@ -63,8 +99,6 @@ router.put("/:id", admin, async (req, res) => {
     return res.status(400).send("Invalid Id");
   }
 });
-
-
 
 function validateEditChallenge(challenge) {
   const Schema = Joi.object({

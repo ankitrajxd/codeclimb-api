@@ -32,6 +32,13 @@ const challengeSchema = new mongoose.Schema({
   },
 });
 
+// Create a text index on the title, description, and category fields
+challengeSchema.index({
+  title: "text",
+  description: "text",
+  category: "text",
+});
+
 const Challenge = mongoose.model("Challenge", challengeSchema);
 
 function validateChallenge(challenge) {

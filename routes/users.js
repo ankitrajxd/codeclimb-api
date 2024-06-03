@@ -1,13 +1,21 @@
 import { Router } from "express";
 import { User, validateUser } from "../models/user.js";
 import bcrypt from "bcrypt";
-import { admin } from "../middleware/auth.js";
+import { admin, auth } from "../middleware/auth.js";
 
 const router = Router();
 
 router.get("/", admin, async (req, res) => {
   const users = await User.find().select("name email solvedChallenges");
   res.send(users);
+});
+
+router.get("/me", auth, async (req, res) => {
+  const user = await User.findById(req.user).select(
+    "_id name email role solvedChallenges"
+  );
+    
+  res.send(user);
 });
 
 router.post("/", async (req, res) => {
