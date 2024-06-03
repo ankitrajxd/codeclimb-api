@@ -9,20 +9,18 @@ router.get("/", async (req, res) => {
   try {
     let query = {};
 
-    // Check if 'difficulty' query parameter exists
     if (req.query.difficulty) {
-      // Convert user-provided difficulty to lowercase
       const difficulty = req.query.difficulty.toLowerCase();
-      
-      // Add case-insensitive filter for difficulty
-      query.difficulty = { $regex: new RegExp('^' + difficulty, 'i') };
+
+      query.difficulty = { $regex: new RegExp("^" + difficulty, "i") };
     }
 
-    // Fetch challenges based on the query
     const challenges = await Challenge.find(query);
     res.send(challenges);
   } catch (error) {
-    res.status(500).json({ error: "An error occurred while fetching challenges" });
+    res
+      .status(500)
+      .json({ error: "An error occurred while fetching challenges" });
   }
 });
 

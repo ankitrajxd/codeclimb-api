@@ -8,6 +8,15 @@ import cookieParser from "cookie-parser";
 
 configDotenv();
 
+if (!process.env.JWT_SECRET_KEY) {
+  console.log("FATAL ERROR, JWT SECRET KEY NOT PROVIDED!");
+  process.exit(1);
+}
+if (!process.env.MONGO_URL) {
+  console.log("FATAL ERROR, DATABASE URL NOT PROVIDED!");
+  process.exit(1);
+}
+
 // Database connection
 mongoose
   .connect(process.env.MONGO_URL)
