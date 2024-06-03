@@ -30,14 +30,17 @@ router.post("/", async (req, res) => {
 
   // generate a jwt token
 
-  const token = jwt.sign({ _id: user._id, role: user.role }, process.env.JWT_SECRET_KEY);
+  const token = jwt.sign(
+    { _id: user._id, role: user.role },
+    process.env.JWT_SECRET_KEY
+  );
 
   // Set the token as a cookie
   res.cookie("token", token, {
     httpOnly: true, // Ensures the cookie is only accessible by the web server
     secure: true, // Ensures the cookie is only sent over HTTPS
     sameSite: "strict", // Ensures the cookie is sent only to your domain
-    maxAge: 120000, // Cookie expiration time in milliseconds (1 hour)
+    maxAge: 3600000, // Cookie expiration time in milliseconds (1 hour)
   });
 
   return res.send("logged in");
