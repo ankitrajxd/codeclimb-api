@@ -139,6 +139,9 @@ Delete a Challenge
 - Response:
   - Success message
 
+
+### Searching
+
 Search a Challenge
 
 - Endpoint: DELETE /api/challenges/search

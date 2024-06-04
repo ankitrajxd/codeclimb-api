@@ -3,6 +3,11 @@ import { User, validateUser } from "../models/user.js";
 import bcrypt from "bcrypt";
 import { admin, auth } from "../middleware/auth.js";
 import Joi from "joi";
+import nodemailer from "nodemailer";
+import jwt from "jsonwebtoken";
+import { configDotenv } from "dotenv";
+
+configDotenv();
 
 const router = Router();
 
@@ -98,5 +103,106 @@ function validatePutRequest(user) {
 }
 
 //============================================
+// forget password
+
+router.post("/forget-password", async (req, res) => {
+  const { error } = validateForgetPasswordReq(req.body);
+
+  if (error) {
+    return res.status(400).send(error.message);
+  }
+
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return res.status(400).send("Account not found!");
+  }
+
+  const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, {
+    expiresIn: "1h",
+  });
+
+  const updatedUser = await User.findByIdAndUpdate(
+    user._id,
+    {
+      resetPasswordToken: token,
+      resetPasswordExpires: Date.now() + 3600000,
+    },
+    { new: true }
+  );
+
+  // sending email with reset link
+  // Configure your email service
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: "ankitraz2308@gmail.com",
+      pass: process.env.GOOGLE_APP_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    to: user.email,
+    from: "passwordreset@demo.com",
+    subject: "CodeClimb Password Reset",
+    text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
+      Please click on the following link, or paste this into your browser to complete the process:\n\n
+      http://${req.headers.host}/api/users/reset-password/${token}\n\n
+      If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+  };
+
+  await transporter.sendMail(mailOptions);
+  res.status(200).send("Password reset email sent");
+});
+
+//--------------------------------------------
+// function to validate email.
+function validateForgetPasswordReq(email) {
+  const Schema = Joi.object({
+    email: Joi.string().required().trim(),
+  });
+
+  return Schema.validate(email);
+}
+//==========================================
+// user will send new password with the generated token
+
+router.post("/reset-password/:token", async (req, res) => {
+  const decoded = jwt.verify(req.params.token, process.env.JWT_SECRET_KEY);
+
+  const user = await User.findOne({
+    _id: decoded._id,
+    resetPasswordToken: req.params.token,
+    // resetPasswordExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return res.status(400).send("Invalid token");
+  }
+
+  // check whether new password is similar to old one or not!
+  const checkPassword = await bcrypt.compare(req.body.password, user.password);
+  if (checkPassword) {
+    return res
+      .status(400)
+      .send("Your new password can not be same as the previous one.");
+  }
+
+  // hash the password
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(req.body.password, salt);
+
+  // update the password field.
+  await User.findByIdAndUpdate(
+    user._id,
+    {
+      password: hashedPassword,
+      resetPasswordToken: null,
+      resetPasswordExpires: null,
+    },
+    { new: true }
+  );
+
+  res.send("Password reset successfully!");
+});
 
 export { router };
