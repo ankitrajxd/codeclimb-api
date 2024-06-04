@@ -118,10 +118,11 @@ router.post("/forget-password", async (req, res) => {
   }
 
   const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, {
-    expiresIn: "1h",
+    expiresIn: 60,
   });
 
-  const updatedUser = await User.findByIdAndUpdate(
+  // add the resetpassword token field on user obj so that it can be verified later.
+  await User.findByIdAndUpdate(
     user._id,
     {
       resetPasswordToken: token,
@@ -135,14 +136,14 @@ router.post("/forget-password", async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "Gmail",
     auth: {
-      user: "ankitraz2308@gmail.com",
+      user: process.env.GMAIL_ADDRESS,
       pass: process.env.GOOGLE_APP_PASSWORD,
     },
   });
 
   const mailOptions = {
     to: user.email,
-    from: "passwordreset@demo.com",
+    from: process.env.GMAIL_ADDRESS,
     subject: "CodeClimb Password Reset",
     text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n
       Please click on the following link, or paste this into your browser to complete the process:\n\n
@@ -167,19 +168,23 @@ function validateForgetPasswordReq(email) {
 // user will send new password with the generated token
 
 router.post("/reset-password/:token", async (req, res) => {
-  const decoded = jwt.verify(req.params.token, process.env.JWT_SECRET_KEY);
+  try {
+    jwt.verify(req.params.token, process.env.JWT_SECRET_KEY);
+  } catch (error) {
+    return res.status(400).send("Link Expired");
+  }
 
   const user = await User.findOne({
     _id: decoded._id,
     resetPasswordToken: req.params.token,
-    // resetPasswordExpires: { $gt: Date.now() },
+    resetPasswordExpires: { $gt: Date.now() },
   });
 
   if (!user) {
     return res.status(400).send("Invalid token");
   }
 
-  // check whether new password is similar to old one or not!
+  // check whether new password is similar to old one
   const checkPassword = await bcrypt.compare(req.body.password, user.password);
   if (checkPassword) {
     return res

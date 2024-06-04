@@ -16,12 +16,16 @@ if (!process.env.MONGO_URL) {
   console.log("FATAL ERROR, DATABASE URL NOT PROVIDED!");
   process.exit(1);
 }
+if (!process.env.GOOGLE_APP_PASSWORD) {
+  console.log("FATAL ERROR, Google app password not provided. Mailing feature will not work!");
+  process.exit(1);
+}
 
 // Database connection
 mongoose
   .connect(process.env.MONGO_URL)
   .then(() => console.log("Database Connected..."))
-  .catch((err) => console.log("Db not connected!"));
+  .catch((err) => console.log("Database not connected!"));
 
 const app = express();
 
