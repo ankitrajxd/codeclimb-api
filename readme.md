@@ -71,10 +71,11 @@ Update a User (solvedChallenges)
 
 ---
 
-| Method | Endpoint            | Description                       | Request Body                                                                      | Response                       |
-| ------ | ------------------- | --------------------------------- | --------------------------------------------------------------------------------- | ------------------------------ |
-| POST   | /api/users/register | Register a new user               | { name, email, password, role (optional: "admin") }                               | { user: registeredUserObject } |
-| POST   | /api/users/:id      | Update a user's solved challenges | { solvedChallenges: [challengeId1, challengeId2, ...], role (optional: "admin") } | { user: updatedUserObject }    |
+| Method | Endpoint            | Description                             | Request Body                                                                      | Response                       |
+| ------ | ------------------- | --------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------ |
+| POST   | /api/users/register | Register a new user                     | { name, email, password, role (optional: "admin") }                               | { user: registeredUserObject } |
+| POST   | /api/users/:id      | Update a user's solved challenges       | { solvedChallenges: [challengeId1, challengeId2, ...], role (optional: "admin") } | { user: updatedUserObject }    |
+| GET    | /api/users/me       | Get the currently logged-in user's info |                                                                                   |
 
 ---
 
@@ -164,7 +165,7 @@ Delete a Challenge
 
 | Method | Endpoint            | Description                    | Authorization (if required) | Request Body                      | Response                   |
 | ------ | ------------------- | ------------------------------ | --------------------------- | --------------------------------- | -------------------------- |
-| GET    | /api/challenges     | Get all challenges             | Required                    | None                              | Array of challenge objects |
+| GET    | /api/challenges     | Get all challenges             | None                        | None                              | Array of challenge objects |
 | GET    | /api/challenges/:id | Get a specific challenge by ID | None                        | None                              | Challenge object           |
 | POST   | /api/challenges     | Add a new challenge            | Admin Only                  | { title, link, image (optional) } | Added challenge object     |
 | PUT    | /api/challenges/:id | Update an existing challenge   | Admin Only                  | { title, link, image }            | Updated challenge object   |
@@ -199,7 +200,7 @@ Filter Challenges by difficulty
 
 | Method | Endpoint               | Description                     | Authorization | Query/Body                                              | Response                            |
 | ------ | ---------------------- | ------------------------------- | ------------- | ------------------------------------------------------- | ----------------------------------- |
-| GET    | /api/challenges/search | Search for challenges by query  | Required      | query (in query parameters)                             | Array of matching challenge objects |
+| GET    | /api/challenges/search | Search for challenges by query  | None      | query (in query parameters)                             | Array of matching challenge objects |
 | GET    | /api/challenges        | Filter challenges by difficulty | None          | difficulty=Easy or Medium or Hard (in query parameters) | Array of filtered challenge objects |
 
 ---
