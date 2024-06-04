@@ -177,11 +177,11 @@ Delete a Challenge
 
 Search a Challenge
 
-- Endpoint: DELETE /api/challenges/search
+- Endpoint: POST /api/challenges/search
 - Description: Search Challenges using query.
-- Authorization: Required (admin only)
-- Request Parameters:
-  - id: Challenge ID (string, required)
+- Authorization: None
+- Query Parameters:
+  - q: (string, required)
 - Response:
   - List of Challenge Objects
 
