@@ -54,6 +54,7 @@ router.post("/", async (req, res) => {
   });
 });
 
+//=========================================
 // updating the challenges for the users
 router.put("/:id", auth, async (req, res) => {
   const { error } = validatePutRequest(req.body);
@@ -78,6 +79,7 @@ router.put("/:id", auth, async (req, res) => {
     );
 
     res.send({
+      _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
       solvedChallenges: updatedUser.solvedChallenges,
@@ -94,5 +96,7 @@ function validatePutRequest(user) {
 
   return Schema.validate(user);
 }
+
+//============================================
 
 export { router };

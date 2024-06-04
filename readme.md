@@ -9,7 +9,7 @@ To use the CodeClimb API, you need to have Node.js and MongoDB installed on your
 1. Clone this repository:
 
 ```
-git clone https://github.com/yourusername/codecimb-api.git
+git clone https://github.com/ankitrajxd/codeclimb-api.git
 ```
 
 2. Install dependencies:
@@ -49,10 +49,23 @@ Register a User
   - email: User's email (string, required)
   - password: User's password (string, required, min length: 8)
 
-  *optionally you can pass `role: "admin"` property if you want to create an 'admin' user.*
+  _optionally you can pass `role: "admin"` property if you want to create an 'admin' user._
 
 - Response:
 - user: Registered user object (excluding password)
+
+Update a User (solvedChallenges)
+
+- Endpoint: POST /api/users/:id
+- Description: Update solvedChallenges property.
+
+- Request Body:
+  - solvedChallenges: Array of Challenge id
+
+  _optionally you can pass `role: "admin"` property if you want to create an 'admin' user._
+
+- Response:
+- user: Updated user object (excluding password)
 
 Login
 
@@ -71,6 +84,23 @@ Get All Challenges
 - Endpoint: GET /api/challenges
 - Description: Get all available challenges.
 - Authorization: Required
+- Response:
+  - Array of challenge objects
+
+
+Get details about a particular challenge
+
+- Endpoint: GET /api/challenges:id
+- Description: Get challenge by id.
+- Response:
+  - challenge object
+
+Filter Challenges by difficulty
+
+- Endpoint: GET /api/challenges
+- Description: Filter available by difficulty.
+- Query Parameters:
+  - difficulty: `Hard` || `Easy` || `Medium` (string)
 - Response:
   - Array of challenge objects
 
@@ -104,11 +134,20 @@ Delete a Challenge
 
 - Endpoint: DELETE /api/challenges/:id
 - Description: Delete an existing challenge.
+- Query Parameters:
+  - q: QueryTerm (string)
+- Response:
+  - Success message
+
+Search a Challenge
+
+- Endpoint: DELETE /api/challenges/search
+- Description: Search Challenges using query.
 - Authorization: Required (admin only)
 - Request Parameters:
   - id: Challenge ID (string, required)
 - Response:
-  - Success message
+  - List of Challenge Objects
 
 ## Authentication
 
