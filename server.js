@@ -39,7 +39,7 @@ app.use("/api/users", users);
 app.use("/api/auth", auth);
 
 app.get("/", (req, res) => {
-  res.send("Hello world");
+  res.send("Welcome to codeclimb api.");
 });
 
 const PORT = process.env.PORT || 4000;
