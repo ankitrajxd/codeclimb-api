@@ -1,5 +1,8 @@
 import mongoose from "mongoose";
 import { Challenge } from "../models/challenge.js";
+import { configDotenv } from "dotenv";
+
+configDotenv();
 
 // Array of challenge objects to be seeded into the database
 const challenges = [
@@ -79,7 +82,7 @@ const challenges = [
 const seedChallenges = async () => {
   try {
     // Delete existing challenges (optional)
-    await Challenge.deleteMany({});
+    // await Challenge.deleteMany({});
 
     // Insert new challenges into the database
     await Challenge.insertMany(challenges);
@@ -95,10 +98,7 @@ const seedChallenges = async () => {
 
 // Connect to MongoDB
 mongoose
-  .connect("mongodb://localhost:27017/codeclimb", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URL)
   .then(() => {
     console.log("MongoDB connected");
     // Seed challenges into the database

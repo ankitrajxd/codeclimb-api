@@ -71,11 +71,12 @@ Update a User (solvedChallenges)
 
 ---
 
-| Method | Endpoint            | Description                             | Request Body                                                                      | Response                       |
-| ------ | ------------------- | --------------------------------------- | --------------------------------------------------------------------------------- | ------------------------------ |
-| POST   | /api/users/register | Register a new user                     | { name, email, password, role (optional: "admin") }                               | { user: registeredUserObject } |
-| POST   | /api/users/:id      | Update a user's solved challenges       | { solvedChallenges: [challengeId1, challengeId2, ...], role (optional: "admin") } | { user: updatedUserObject }    |
-| GET    | /api/users/me       | Get the currently logged-in user's info |                                                                                   |
+| Method | Endpoint            | Description                                            | Request Body                                                                      | Response                       |
+| ------ | ------------------- | ------------------------------------------------------ | --------------------------------------------------------------------------------- | ------------------------------ |
+| POST   | /api/users/register | Register a new user                                    | { name, email, password, role (optional: "admin") }                               | { user: registeredUserObject } |
+| POST   | /api/users/:id      | Update a user's solved challenges                      | { solvedChallenges: [challengeId1, challengeId2, ...], role (optional: "admin") } | { user: updatedUserObject }    |
+| GET    | /api/users/me       | Get the currently logged-in user's info                |                                                                                   |
+| GET    | /api/users          | Get the list of all users registered (Admin only)  |                                                                                   |
 
 ---
 
@@ -200,7 +201,7 @@ Filter Challenges by difficulty
 
 | Method | Endpoint               | Description                     | Authorization | Query/Body                                              | Response                            |
 | ------ | ---------------------- | ------------------------------- | ------------- | ------------------------------------------------------- | ----------------------------------- |
-| GET    | /api/challenges/search | Search for challenges by query  | None      | query (in query parameters)                             | Array of matching challenge objects |
+| GET    | /api/challenges/search | Search for challenges by query  | None          | query (in query parameters)                             | Array of matching challenge objects |
 | GET    | /api/challenges        | Filter challenges by difficulty | None          | difficulty=Easy or Medium or Hard (in query parameters) | Array of filtered challenge objects |
 
 ---
