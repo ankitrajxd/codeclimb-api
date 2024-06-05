@@ -170,10 +170,14 @@ function validateForgetPasswordReq(email) {
 router.post("/reset-password/:token", async (req, res) => {
   try {
     jwt.verify(req.params.token, process.env.JWT_SECRET_KEY);
+    
+    
   } catch (error) {
     return res.status(400).send("Link Expired");
   }
-
+  
+  const decoded = jwt.decode(req.params.token, process.env.JWT_SECRET_KEY);
+  
   const user = await User.findOne({
     _id: decoded._id,
     resetPasswordToken: req.params.token,
