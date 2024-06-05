@@ -17,13 +17,19 @@ if (!process.env.MONGO_URL) {
   process.exit(1);
 }
 if (!process.env.GOOGLE_APP_PASSWORD) {
-  console.log("FATAL ERROR, Google app password not provided. Mailing feature will not work!");
+  console.log(
+    "FATAL ERROR, Google app password not provided. Mailing feature will not work!"
+  );
   process.exit(1);
 }
 
 // Database connection
 mongoose
-  .connect(process.env.MONGO_URL)
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    serverSelectionTimeoutMS: 30000, // Increase to 30 seconds
+  })
   .then(() => console.log("Database Connected..."))
   .catch((err) => console.log("Database not connected!"));
 
