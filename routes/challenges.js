@@ -26,7 +26,15 @@ router.get("/", async (req, res) => {
 
 //-----------------------------------------------
 // Ensure the text index is created
-Challenge.createIndexes();
+// Challenge.createIndexes();
+
+Challenge.createIndexes()
+  .then(() => {
+    console.log("Indexes created successfully");
+  })
+  .catch((err) => {
+    console.error("Error creating indexes:", err);
+  });
 
 // Search endpoint
 router.get("/search", async (req, res) => {
