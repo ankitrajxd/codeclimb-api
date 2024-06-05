@@ -25,13 +25,9 @@ if (!process.env.GOOGLE_APP_PASSWORD) {
 
 // Database connection
 mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    serverSelectionTimeoutMS: 30000, // Increase to 30 seconds
-  })
+  .connect(process.env.MONGO_URL)
   .then(() => console.log("Database Connected..."))
-  .catch((err) => console.log("Database not connected!"));
+  .catch((err) => console.log("Database not connected!", err));
 
 const app = express();
 
