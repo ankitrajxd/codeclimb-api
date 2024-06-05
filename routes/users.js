@@ -51,6 +51,25 @@ router.post("/", async (req, res) => {
 
   await user.save();
 
+  // send signup email
+
+  const transporter = nodemailer.createTransport({
+    service: "Gmail",
+    auth: {
+      user: process.env.GMAIL_ADDRESS,
+      pass: process.env.GOOGLE_APP_PASSWORD,
+    },
+  });
+
+  const mailOptions = {
+    to: user.email,
+    from: process.env.GMAIL_ADDRESS,
+    subject: "Welcome to Codeclimb!",
+    text: `hehe enjoy\n\n`,
+  };
+
+  await transporter.sendMail(mailOptions);
+
   return res.send({
     _id: user._id,
     name: user.name,
@@ -170,14 +189,12 @@ function validateForgetPasswordReq(email) {
 router.post("/reset-password/:token", async (req, res) => {
   try {
     jwt.verify(req.params.token, process.env.JWT_SECRET_KEY);
-    
-    
   } catch (error) {
     return res.status(400).send("Link Expired");
   }
-  
+
   const decoded = jwt.decode(req.params.token, process.env.JWT_SECRET_KEY);
-  
+
   const user = await User.findOne({
     _id: decoded._id,
     resetPasswordToken: req.params.token,
